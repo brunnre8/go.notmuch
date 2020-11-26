@@ -17,10 +17,8 @@ func (ts *Tags) toC() *C.notmuch_tags_t {
 }
 
 func (ts *Tags) Close() error {
-	return (*cStruct)(ts).doClose(func() error {
-		C.notmuch_tags_destroy(ts.toC())
-		return nil
-	})
+	C.notmuch_tags_destroy(ts.toC())
+	return nil
 }
 
 // Next retrieves the next tag from the result set. Next returns true if a tag

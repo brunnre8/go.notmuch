@@ -23,10 +23,8 @@ func (t *Thread) toC() *C.notmuch_thread_t {
 }
 
 func (t *Thread) Close() error {
-	return (*cStruct)(t).doClose(func() error {
-		C.notmuch_thread_destroy(t.toC())
-		return nil
-	})
+	C.notmuch_thread_destroy(t.toC())
+	return nil
 }
 
 // Subject returns the subject of a thread.
@@ -56,10 +54,8 @@ func (t *Thread) CountMatched() int {
 // current thread in oldest-first order.
 func (t *Thread) TopLevelMessages() *Messages {
 	ret := &Messages{
-		cptr:   unsafe.Pointer(C.notmuch_thread_get_toplevel_messages(t.toC())),
-		parent: (*cStruct)(t),
+		cptr: unsafe.Pointer(C.notmuch_thread_get_toplevel_messages(t.toC())),
 	}
-	setGcClose(ret)
 	return ret
 }
 
@@ -67,10 +63,8 @@ func (t *Thread) TopLevelMessages() *Messages {
 // oldest-first order.
 func (t *Thread) Messages() *Messages {
 	msgs := &Messages{
-		cptr:   unsafe.Pointer(C.notmuch_thread_get_messages(t.toC())),
-		parent: (*cStruct)(t),
+		cptr: unsafe.Pointer(C.notmuch_thread_get_messages(t.toC())),
 	}
-	setGcClose(msgs)
 	return msgs
 }
 
@@ -118,9 +112,7 @@ func (t *Thread) NewestDate() time.Time {
 func (t *Thread) Tags() *Tags {
 	ctags := C.notmuch_thread_get_tags(t.toC())
 	tags := &Tags{
-		cptr:   unsafe.Pointer(ctags),
-		parent: (*cStruct)(t),
+		cptr: unsafe.Pointer(ctags),
 	}
-	setGcClose(tags)
 	return tags
 }

@@ -16,10 +16,8 @@ import (
 type Messages cStruct
 
 func (ms *Messages) Close() error {
-	return (*cStruct)(ms).doClose(func() error {
-		C.notmuch_messages_destroy(ms.toC())
-		return nil
-	})
+	C.notmuch_messages_destroy(ms.toC())
+	return nil
 }
 
 func (ms *Messages) toC() *C.notmuch_messages_t {
@@ -50,10 +48,8 @@ func (ms *Messages) Tags() *Tags {
 	// it as OOM for now but we eventually have to narrow it down.
 	checkOOM(unsafe.Pointer(ctags))
 	tags := &Tags{
-		cptr:   unsafe.Pointer(ctags),
-		parent: (*cStruct)(ms),
+		cptr: unsafe.Pointer(ctags),
 	}
-	setGcClose(tags)
 	return tags
 }
 
@@ -61,10 +57,8 @@ func (ms *Messages) get() *Message {
 	cmessage := C.notmuch_messages_get(ms.toC())
 	checkOOM(unsafe.Pointer(cmessage))
 	message := &Message{
-		cptr:   unsafe.Pointer(cmessage),
-		parent: (*cStruct)(ms),
+		cptr: unsafe.Pointer(cmessage),
 	}
-	setGcClose(message)
 	return message
 }
 

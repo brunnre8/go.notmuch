@@ -19,10 +19,8 @@ func (ts *Threads) toC() *C.notmuch_threads_t {
 }
 
 func (ts *Threads) Close() error {
-	return (*cStruct)(ts).doClose(func() error {
-		C.notmuch_threads_destroy(ts.toC())
-		return nil
-	})
+	C.notmuch_threads_destroy(ts.toC())
+	return nil
 }
 
 // Next retrieves the next thread from the result set. Next returns true if a thread
@@ -40,10 +38,8 @@ func (ts *Threads) get() *Thread {
 	cthread := C.notmuch_threads_get(ts.toC())
 	checkOOM(unsafe.Pointer(cthread))
 	thread := &Thread{
-		cptr:   unsafe.Pointer(cthread),
-		parent: (*cStruct)(ts),
+		cptr: unsafe.Pointer(cthread),
 	}
-	setGcClose(thread)
 	return thread
 }
 

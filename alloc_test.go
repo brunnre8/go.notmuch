@@ -13,7 +13,7 @@ import (
 // Basic test of the case where the user explicitly closes a parent object
 // before the child object. This is inevitable if Close is used at all; the
 // GC will close things child-first.
-func TestOutOfOrderClose(t *testing.T) {
+func TestInOrderClose(t *testing.T) {
 	db, err := Open(dbPath, DBReadOnly)
 	if err != nil {
 		t.Fatalf("Open(%q): unexpected error: %s", dbPath, err)
@@ -25,6 +25,6 @@ func TestOutOfOrderClose(t *testing.T) {
 		t.Fatalf("error getting the threads: %s", err)
 	}
 
-	db.Close()
 	threads.Close()
+	db.Close()
 }

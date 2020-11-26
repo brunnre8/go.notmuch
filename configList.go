@@ -13,10 +13,8 @@ import "C"
 type ConfigList cStruct
 
 func (cl *ConfigList) Close() error {
-	return (*cStruct)(cl).doClose(func() error {
-		C.notmuch_config_list_destroy(cl.toC())
-		return nil
-	})
+	C.notmuch_config_list_destroy(cl.toC())
+	return nil
 }
 
 func (cl *ConfigList) toC() *C.notmuch_config_list_t {

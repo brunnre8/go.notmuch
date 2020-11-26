@@ -21,10 +21,8 @@ func (m *Message) toC() *C.notmuch_message_t {
 }
 
 func (m *Message) Close() error {
-	return (*cStruct)(m).doClose(func() error {
-		C.notmuch_message_destroy(m.toC())
-		return nil
-	})
+	C.notmuch_message_destroy(m.toC())
+	return nil
 }
 
 // ID returns the message ID.
@@ -46,10 +44,8 @@ func (m *Message) Replies() (*Messages, error) {
 	// We point the messages object directly at our thread, rather than having
 	// the gc reference go through this message:
 	msgs := &Messages{
-		cptr:   unsafe.Pointer(cmsgs),
-		parent: (*cStruct)(m),
+		cptr: unsafe.Pointer(cmsgs),
 	}
-	setGcClose(msgs)
 	return msgs, nil
 }
 
@@ -91,10 +87,8 @@ func (m *Message) Header(name string) string {
 func (m *Message) Tags() *Tags {
 	ctags := C.notmuch_message_get_tags(m.toC())
 	tags := &Tags{
-		cptr:   unsafe.Pointer(ctags),
-		parent: (*cStruct)(m),
+		cptr: unsafe.Pointer(ctags),
 	}
-	setGcClose(tags)
 	return tags
 }
 

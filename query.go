@@ -53,10 +53,8 @@ var (
 )
 
 func (q *Query) Close() error {
-	return (*cStruct)(q).doClose(func() error {
-		C.notmuch_query_destroy(q.toC())
-		return nil
-	})
+	C.notmuch_query_destroy(q.toC())
+	return nil
 }
 
 func (q *Query) toC() *C.notmuch_query_t {
@@ -76,10 +74,8 @@ func (q *Query) Threads() (*Threads, error) {
 		return nil, err
 	}
 	threads := &Threads{
-		cptr:   unsafe.Pointer(cthreads),
-		parent: (*cStruct)(q),
+		cptr: unsafe.Pointer(cthreads),
 	}
-	setGcClose(threads)
 	return threads, nil
 }
 
@@ -91,10 +87,8 @@ func (q *Query) Messages() (*Messages, error) {
 		return nil, err
 	}
 	msgs := &Messages{
-		cptr:   unsafe.Pointer(cmsgs),
-		parent: (*cStruct)(q),
+		cptr: unsafe.Pointer(cmsgs),
 	}
-	setGcClose(msgs)
 	return msgs, nil
 }
 

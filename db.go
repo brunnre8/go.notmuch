@@ -38,9 +38,7 @@ func (db *DB) toC() *C.notmuch_database_t {
 
 // Close closes the database.
 func (db *DB) Close() error {
-	return (*cStruct)(db).doClose(func() error {
-		return statusErr(C.notmuch_database_destroy(db.toC()))
-	})
+	return statusErr(C.notmuch_database_destroy(db.toC()))
 }
 
 // Create creates a new, empty notmuch database located at 'path'.
@@ -53,7 +51,6 @@ func Create(path string) (*DB, error) {
 		return nil, err
 	}
 	db := &DB{cptr: unsafe.Pointer(cdb)}
-	setGcClose(db)
 	return db, nil
 }
 
@@ -71,7 +68,6 @@ func Open(path string, mode DBMode) (*DB, error) {
 		return nil, err
 	}
 	db := &DB{cptr: unsafe.Pointer(cdb)}
-	setGcClose(db)
 	return db, nil
 }
 
@@ -104,10 +100,8 @@ func (db *DB) NewQuery(queryString string) *Query {
 	defer C.free(unsafe.Pointer(cstr))
 	cquery := C.notmuch_query_create(db.toC(), cstr)
 	query := &Query{
-		cptr:   unsafe.Pointer(cquery),
-		parent: (*cStruct)(db),
+		cptr: unsafe.Pointer(cquery),
 	}
-	setGcClose(query)
 	return query
 }
 
@@ -155,10 +149,8 @@ func (db *DB) AddMessage(filename string) (*Message, error) {
 		return nil, err
 	}
 	msg := &Message{
-		cptr:   unsafe.Pointer(cmsg),
-		parent: (*cStruct)(db),
+		cptr: unsafe.Pointer(cmsg),
 	}
-	setGcClose(msg)
 	return msg, err
 }
 
@@ -183,10 +175,8 @@ func (db *DB) FindMessage(id string) (*Message, error) {
 		return nil, ErrNotFound
 	}
 	msg := &Message{
-		cptr:   unsafe.Pointer(cmsg),
-		parent: (*cStruct)(db),
+		cptr: unsafe.Pointer(cmsg),
 	}
-	setGcClose(msg)
 	return msg, nil
 }
 
@@ -203,10 +193,8 @@ func (db *DB) FindMessageByFilename(filename string) (*Message, error) {
 		return nil, ErrNotFound
 	}
 	msg := &Message{
-		cptr:   unsafe.Pointer(cmsg),
-		parent: (*cStruct)(db),
+		cptr: unsafe.Pointer(cmsg),
 	}
-	setGcClose(msg)
 	return msg, nil
 }
 
@@ -217,10 +205,8 @@ func (db *DB) Tags() (*Tags, error) {
 		return nil, ErrUnknownError
 	}
 	tags := &Tags{
-		cptr:   unsafe.Pointer(ctags),
-		parent: (*cStruct)(db),
+		cptr: unsafe.Pointer(ctags),
 	}
-	setGcClose(tags)
 	return tags, nil
 }
 
@@ -237,10 +223,8 @@ func (db *DB) GetConfigList(prefix string) (*ConfigList, error) {
 		return nil, err
 	}
 	cl := &ConfigList{
-		cptr:   unsafe.Pointer(ccl),
-		parent: (*cStruct)(db),
+		cptr: unsafe.Pointer(ccl),
 	}
-	setGcClose(cl)
 	return cl, nil
 }
 
